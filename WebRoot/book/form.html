@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>图书管理</title>
+<link rel="stylesheet"
+	href="#(CONTEXT_PATH??)/static/lib/layui/css/layui.css">
+<script type="text/javascript"
+	src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+
+
+	<form class="layui-form" action="">
+		<div class="layui-form-item">
+			<label class="layui-form-label">名称</label>
+			<div class="layui-input-block">
+				<input type="hidden" name="id" value="#(book.id??)" /> <input
+					type="text" name="name" value="#(book.name??)" required
+					lay-verify="required" placeholder="请输入" autocomplete="off"
+					class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">条形码</label>
+			<div class="layui-input-inline">
+				<input type="text" name="code" value="#(book.code??)" required
+					lay-verify="required" autocomplete="off" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">字母或数字</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">类别</label>
+			<div class="layui-input-block">
+				<select id="category_id" name="category_id" lay-filter="category_id">
+					<option value="">请选择</option> #for(c : categorys)
+					<option value="#(c.id??)">#(c.name??)</option> #end
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">在馆数量</label>
+			<div class="layui-input-inline">
+				<input type="text" name="current_count"
+					value="#(book.current_count??)" required lay-verify="required"
+					autocomplete="off" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">数字</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">借出数量</label>
+			<div class="layui-input-inline">
+				<input type="text" name="out_count" value="#(book.out_count??)"
+					required lay-verify="required" autocomplete="off"
+					class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">数字</div>
+		</div>
+		<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label">图片</label>
+			<div class="layui-input-block">
+				<img width="50" height="80" src="#(context_path??)/upload/temp/#if(book.image??)#(book.image??)#else no.jpg #end" />
+				<input type="hidden" id="image" name="image" />
+				<button type="button" class="layui-btn" id="uploadBtn">
+					<i class="layui-icon">&#xe67c;</i>上传图片
+				</button>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="formDemo">提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+
+	<script src="#(CONTEXT_PATH??)/static/lib//layui/layui.js"></script>
+	<script>
+		$("#category_id").val("#(book.category_id??)");
+		layui.use([ 'form', "upload","layer" ], function() {
+			var form = layui.form;
+			var layer = layui.layer;
+
+			var upload = layui.upload;
+
+			//执行实例
+			var uploadInst = upload.render({
+				elem : '#uploadBtn' //绑定元素
+				,field:'image',
+				url : '/upload' //上传接口
+				,
+				done : function(res) {
+					//上传完毕回调
+					console.log(res);
+					$("#image").val(res.data);
+					layer.msg('上传成功！');
+				},
+				error : function() {
+					//请求异常回调
+					layer.msg('上传失败！');
+				}
+			});
+
+			//监听提交
+			form.on('submit(formDemo)', function(data) {
+				//layer.msg(JSON.stringify(data.field));
+				$.post("#(CONTEXT_PATH??)/book/save", data.field, function(
+						data) {
+					if (data == "suc") {
+						window.parent.queryData();
+						window.parent.layer.closeAll();
+						window.parent.layer.msg('图书信息保存成功！', {
+							icon : 1,
+							time : 1000
+						//2秒关闭（如果不配置，默认是3秒）
+						}, function() {
+
+						});
+					}
+				});
+				return false;
+			});
+
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>用户管理</title>
+<link rel="stylesheet" href="#(CONTEXT_PATH??)/static/lib/layui/css/layui.css">
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="layui-container">  
+  <div class="layui-row" style="margin-top:10px;">
+    <div class="layui-col-md1" style="line-height:30px;">
+   	 用户名：
+    </div>
+    <div class="layui-col-md2">
+		<input type="text" name="username" id="username" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-col-md2">
+    	<button type="button" onclick="queryData();" class="layui-btn">查询</button>    
+    	<button type="button" onclick="editUser('');" class="layui-btn">添加</button>    
+    </div>
+  </div>
+</div>
+
+
+
+<table id="userTable" lay-filter="userFilter"></table>
+
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script src="#(CONTEXT_PATH??)/static/lib//layui/layui.js"></script>
+<script>
+function editUser(id){
+	layer.open({
+	  type: 2, 
+	  content: '#(context_path??)/user/edit?id=' + id ,
+	  area: ['600px', '400px']
+	}); 
+}
+
+var tableIns = null;
+var layer = null;
+
+function queryData(){
+	tableIns.reload({
+	  where: { //设定异步数据接口的额外参数，任意设
+	    username:$("#username").val()
+	  }
+	  ,page: {
+	    curr: 1 //重新从第 1 页开始
+	  }
+	});
+}
+
+
+//一般直接写在一个js文件中
+layui.use(['layer', 'form','table'], function(){
+  layer = layui.layer
+  ,form = layui.form;
+  var table = layui.table;
+
+  //第一个实例
+  tableIns = table.render({
+    elem: '#userTable'
+    ,height: 312
+    ,url: '#(CONTEXT_PATH??)/user/query' //数据接口
+    ,where:{username:null}
+    ,page: true //开启分页
+    ,cols: [[ //表头
+      {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+      ,{field: 'username', title: '用户名', width:180}
+      ,{field: 'password', title: '密码', width:180, sort: true}
+      ,{field: 'name', title: '姓名', width:180} 
+      ,{field: 'remark', title: '备注', width: 277}
+      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+    ]]
+  });
+//监听行工具事件
+  table.on('tool(userFilter)', function(obj){
+    var data = obj.data;
+    //console.log(obj)
+    if(obj.event === 'del'){
+      layer.confirm('真的删除行么', function(index){
+          $.post("#(CONTEXT_PATH??)/user/delete",{id:data.id},function(data){
+              if(data=='suc'){
+            	  obj.del();
+                  layer.close(index);
+                  layer.msg('删除成功！');
+              }else{
+            	  layer.msg('删除失败！');
+              }
+          });
+       
+      });
+    } else if(obj.event === 'edit'){
+    	editUser(data.id);
+    }
+  });
+  //layer.msg('Hello World');
+});
+</script> 
+</body>
+</html>

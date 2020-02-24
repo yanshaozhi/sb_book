@@ -1,0 +1,17 @@
+eclipse.preferences.version=1
+encoding/._jbolt.properties=utf-8
+encoding//WebRoot/WEB-INF/web.xml=utf-8
+encoding//WebRoot/index.html=utf-8
+encoding//src/com/yingfa/common/config/AdminRoutes.java=utf-8
+encoding//src/com/yingfa/common/config/MainConfig.java=utf-8
+encoding//src/com/yingfa/controller/IndexController.java=utf-8
+encoding//src/config-pro.properties=utf-8
+encoding//src/config.properties=utf-8
+encoding//src/log4j.properties=utf-8
+encoding//src/logging.properties=utf-8
+encoding//src/undertow.properties=utf-8
+encoding/<project>=UTF-8
+encoding/restart.sh=utf-8
+encoding/start.bat=utf-8
+encoding/start.sh=utf-8
+encoding/stop.sh=utf-8

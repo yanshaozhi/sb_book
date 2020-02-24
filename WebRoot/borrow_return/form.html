@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>借阅归还管理</title>
+<link rel="stylesheet"
+	href="#(CONTEXT_PATH??)/static/lib/layui/css/layui.css">
+<script type="text/javascript"
+	src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+
+
+	<form class="layui-form" action="">
+		<div class="layui-form-item">
+			<label class="layui-form-label">学生姓名</label>
+			<div class="layui-input-block">
+				<input type="hidden" name="id" value="#(borrow_return.id??)" /> 
+				  <select	id="student_id" name="student_id" lay-filter="student_id">
+					<option value="">请选择</option> 
+					#for(s : students)
+					<option value="#(s.id??)">#(s.name??)</option> 
+					#end
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">书名</label>
+			<div class="layui-input-block">
+			 	<select	id="book_id" name="book_id" lay-filter="book_id">
+					<option value="">请选择</option> 
+					#for(b : books)
+					<option value="#(b.id??)">#(b.name??)</option> 
+					#end
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">类型</label>
+			<div class="layui-input-block">
+				<select id="type" name="type" lay-filter="type">
+					<option value="">请选择</option> 
+					<option value="归还">归还</option> 
+					<option value="借出">借出</option> 
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="formDemo">提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+
+	<script src="#(CONTEXT_PATH??)/static/lib//layui/layui.js"></script>
+	<script>
+		$("#book_id").val("#(borrow_return.book_id??)");
+		$("#borrow_return_id").val("#(borrow_return.borrow_return_id??)");
+		
+		layui.use([ 'form', "laydate" ], function() {
+			var form = layui.form;
+
+			//监听提交
+			form.on('submit(formDemo)', function(data) {
+				//layer.msg(JSON.stringify(data.field));
+				$.post("#(CONTEXT_PATH??)/borrow_return/save", data.field, function(
+						data) {
+					if (data == "suc") {
+						window.parent.queryData();
+						window.parent.layer.closeAll();
+						window.parent.layer.msg('信息保存成功！', {
+							icon : 1,
+							time : 1000
+						//2秒关闭（如果不配置，默认是3秒）
+						}, function() {
+
+						});
+					}
+				});
+				return false;
+			});
+		});
+	</script>
+</body>
+</html>
